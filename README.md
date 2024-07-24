@@ -29,7 +29,7 @@ sc.tl.leiden(adata, resolution=0.5)
 ## Installation
 
 You need to have Python 3.10 or newer installed on your system. If you don't have
-Python installed, we recommend installing [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge).
+Python installed, we recommend installing [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge) or [Miniconda](https://docs.anaconda.com/miniconda/miniconda-install/).
 
 There are several alternative options to install nichepca:
 
