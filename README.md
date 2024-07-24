@@ -31,7 +31,14 @@ sc.tl.leiden(adata, resolution=0.5)
 You need to have Python 3.10 or newer installed on your system. If you don't have
 Python installed, we recommend installing [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge) or [Miniconda](https://docs.anaconda.com/miniconda/miniconda-install/).
 
-There are several alternative options to install nichepca:
+To create a new conda environment with Python 3.10:
+
+```bash
+conda create -n npc-env python=3.10 -y
+conda activate npc-env
+```
+
+There are several options to install nichepca:
 
 <!--
 1) Install the latest release of `nichepca` from [PyPI][link-pypi]:
