@@ -2,6 +2,7 @@ import warnings
 
 import numpy as np
 import pytest
+import scanpy as sc
 import torch
 from utils import generate_dummy_adata
 
@@ -49,3 +50,38 @@ def test_check_for_raw_counts():
     # Check for the specific warning
     with pytest.warns(UserWarning):
         npc.utils.check_for_raw_counts(adata)
+
+
+def test_normalize_per_sample():
+    sample_key = "sample"
+
+    target_sum = 1e4
+
+    adata_1 = generate_dummy_adata()
+    npc.utils.normalize_per_sample(
+        adata_1, target_sum=target_sum, sample_key=sample_key
+    )
+
+    adata_2 = generate_dummy_adata()
+    sc.pp.normalize_total(adata_2, target_sum=target_sum)
+
+    assert np.all(adata_1.X.toarray() == adata_2.X.toarray())
+
+    # second test without fixed target sum
+    target_sum = None
+
+    adata_1 = generate_dummy_adata()
+    npc.utils.normalize_per_sample(
+        adata_1, target_sum=target_sum, sample_key=sample_key
+    )
+
+    adata_2 = generate_dummy_adata()
+    adata_2.X = adata_2.X.astype(np.float32).toarray()
+
+    for sample in adata_2.obs[sample_key].unique():
+        mask = adata_2.obs[sample_key] == sample
+        sub_ad = adata_2[mask].copy()
+        sc.pp.normalize_total(sub_ad)
+        adata_2.X[mask.values] = sub_ad.X
+
+    assert np.all(adata_1.X.astype(np.float32).toarray() == adata_2.X)
