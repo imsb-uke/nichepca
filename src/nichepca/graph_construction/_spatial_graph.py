@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from functools import partial
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -106,6 +107,7 @@ def store_graph(
     adata: AnnData,
     edge_index: torch.tensor | np.ndarray,
     edge_weight: torch.tensor | np.ndarray,
+    extra_key: str | None = None,
 ):
     """
     Store graph data in `adata.uns`.
@@ -118,6 +120,8 @@ def store_graph(
         Edge index of the graph.
     edge_weight : Union[torch.Tensor, np.ndarray]
         Edge weight of the graph.
+    extra_key : str, optional
+        Extra key to store the graph data in `adata.uns`.
 
     Returns
     -------
@@ -125,8 +129,13 @@ def store_graph(
     """
     if "graph" not in adata.uns:
         adata.uns["graph"] = {}
-    adata.uns["graph"]["edge_index"] = to_numpy(edge_index)
-    adata.uns["graph"]["edge_weight"] = to_numpy(edge_weight)
+    if extra_key is not None:
+        adata.uns["graph"][extra_key] = {}
+        adata.uns["graph"][extra_key]["edge_index"] = to_numpy(edge_index)
+        adata.uns["graph"][extra_key]["edge_weight"] = to_numpy(edge_weight)
+    else:
+        adata.uns["graph"]["edge_index"] = to_numpy(edge_index)
+        adata.uns["graph"]["edge_weight"] = to_numpy(edge_weight)
 
 
 def knn_graph(
@@ -309,8 +318,7 @@ def remove_long_links(
     if copy:
         return edge_index, edge_weight
     else:
-        adata.uns["graph"]["edge_index"] = edge_index
-        adata.uns["graph"]["edge_weight"] = edge_weight
+        store_graph(adata, edge_index, edge_weight)
 
 
 def delaunay_graph(
@@ -368,6 +376,9 @@ def delaunay_graph(
         edge_index, edge_weight = remove_long_links(
             edge_index=edge_index, edge_weight=edge_weight
         )
+        # convert back to torch tensors
+        edge_index = torch.tensor(edge_index, dtype=torch.long)
+        edge_weight = torch.tensor(edge_weight, dtype=torch.float)
 
     if verbose:
         print_graph_stats(edge_index=edge_index, num_nodes=adata.n_obs)
@@ -386,16 +397,41 @@ def construct_multi_sample_graph(
     delaunay: bool = False,
     return_graph: bool = False,
     keep_local_edge_index: bool = False,
+    verbose: bool = True,
     **kwargs,
 ):
-    # make sure only one of knn, radius, delaunay is provided
-    assert (
-        sum([knn is not None, radius is not None, delaunay]) == 1
-    ), "Only one of knn, radius, delaunay must be provided."
+    """
+    Construct a multi-sample graph from AnnData.
 
+    Parameters
+    ----------
+    adata : AnnData
+        Annotated data object.
+    sample_key : str
+        Key in `adata.obs` where sample information is stored.
+    knn : int | None, optional
+        Number of nearest neighbors. Defaults to None.
+    radius : float | None, optional
+        Radius for the distance graph constructor. Defaults to None.
+    delaunay : bool, optional
+        Whether to use the delaunay graph constructor. Defaults to False.
+    return_graph : bool, optional
+        Whether to return the graph instead of storing it in `adata`. Defaults to False.
+    keep_local_edge_index : bool, optional
+        Whether to keep the local edge index. Defaults to False.
+    verbose : bool, optional
+        Whether to print graph statistics. Defaults to True.
+    **kwargs
+        Additional keyword arguments passed to the graph constructor.
+
+    Returns
+    -------
+    edge_index, edge_weight : torch.Tensor, torch.Tensor
+        Edge index and edge weight of the constructed graph if `return_graph` is True.
+    """
     edge_index = []
     edge_weight = []
-    global_indices = np.arange(adata.n_obs)
+    global_indices = torch.arange(adata.n_obs)
 
     if "graph" not in adata.uns and not return_graph:
         adata.uns["graph"] = {}
@@ -404,20 +440,16 @@ def construct_multi_sample_graph(
         mask = adata.obs[sample_key] == sample
         ad_sub = adata[mask]
 
-        local_global_indices = global_indices[mask]
+        local_global_indices = global_indices[mask.values]
 
-        if knn is not None:
-            local_edge_index, local_edge_weight = knn_graph(
-                ad_sub, knn, return_graph=True, **kwargs
-            )
-        elif radius is not None:
-            local_edge_index, local_edge_weight = distance_graph(
-                ad_sub, radius, return_graph=True, **kwargs
-            )
-        elif delaunay:
-            local_edge_index, local_edge_weight = delaunay_graph(
-                ad_sub, return_graph=True, **kwargs
-            )
+        local_edge_index, local_edge_weight = resolve_graph_constructor(
+            radius, knn, delaunay
+        )(
+            ad_sub,
+            return_graph=True,
+            verbose=False,
+            **kwargs,
+        )
 
         local_global_edge_index = local_global_indices[local_edge_index]
 
@@ -425,23 +457,58 @@ def construct_multi_sample_graph(
         edge_weight.append(local_edge_weight)
 
         if not return_graph:
-            adata.uns["graph"][sample] = {
-                "edge_index": (
-                    to_numpy(local_edge_index)
-                    if keep_local_edge_index
-                    else to_numpy(local_global_edge_index)
-                ),
-                "edge_weight": to_numpy(local_edge_weight),
-            }
+            store_graph(
+                adata,
+                local_edge_index if keep_local_edge_index else local_global_edge_index,
+                local_edge_weight,
+                extra_key=sample,
+            )
 
-    edge_index = to_numpy(np.concatenate(edge_index, axis=1))
-    edge_weight = to_numpy(np.concatenate(edge_weight, axis=0))
+    edge_index = torch.cat(edge_index, axis=1)
+    edge_weight = torch.cat(edge_weight, axis=0)
+
+    if verbose:
+        print_graph_stats(edge_index=edge_index, num_nodes=adata.n_obs)
 
     if not return_graph:
-        adata.uns["graph"]["edge_index"] = edge_index
-        adata.uns["graph"]["edge_weight"] = edge_weight
+        store_graph(adata, edge_index, edge_weight)
     else:
         return edge_index, edge_weight
+
+
+def resolve_graph_constructor(
+    radius: float | None = None, knn: int | None = None, delaunay: bool = False
+):
+    """
+    Resolves and returns the graph constructor based on the provided parameters.
+
+    Parameters
+    ----------
+    radius
+        The radius for the distance graph constructor.
+    knn
+        The number of nearest neighbors for the knn graph constructor.
+    delaunay
+        Whether to use the delaunay graph constructor.
+
+    Returns
+    -------
+    callable
+        The resolved graph constructor function with the appropriate parameters.
+
+    Raises
+    ------
+    ValueError
+        If no graph constructor is specified.
+    """
+    if radius is not None:
+        return partial(distance_graph, radius=radius)
+    elif knn is not None:
+        return partial(knn_graph, knn=knn)
+    elif delaunay:
+        return delaunay_graph
+    else:
+        raise ValueError("No graph constructor specified.")
 
 
 def to_squidpy(adata: AnnData):

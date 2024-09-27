@@ -7,5 +7,6 @@ from ._spatial_graph import (
     knn_graph,
     print_graph_stats,
     remove_long_links,
+    resolve_graph_constructor,
     to_squidpy,
 )
