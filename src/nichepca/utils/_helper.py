@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 from warnings import warn
 
 import numpy as np
+import scanpy as sc
 import scipy.sparse as sp
 import torch
 
@@ -81,3 +82,32 @@ def check_for_raw_counts(adata: AnnData):
             UserWarning,
             stacklevel=1,
         )
+
+
+def normalize_per_sample(adata, sample_key, **kwargs):
+    """
+    Normalize the per-sample counts in the `adata` object based on the given `sample_key`.
+
+    Parameters
+    ----------
+        adata : AnnData
+            The annotated data object.
+        sample_key : str
+            The key in `adata.obs` that identifies distinct samples.
+        kwargs : dict, optional
+            Additional keyword arguments to be passed to `sc.pp.normalize_total`.
+
+    Returns
+    -------
+    None
+    """
+    if kwargs.get("target_sum", None) is not None:
+        # if target sum is provided, samples make no difference
+        sc.pp.normalize_total(adata, **kwargs)
+    else:
+        adata.X = adata.X.astype(np.float32)
+        for sample in adata.obs[sample_key].unique():
+            mask = adata.obs[sample_key] == sample
+            sub_ad = adata[mask].copy()
+            sc.pp.normalize_total(sub_ad, **kwargs)
+            adata.X[mask.values] = sub_ad.X

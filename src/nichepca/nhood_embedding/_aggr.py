@@ -43,7 +43,7 @@ def aggregate(
     n_layers: int = 1,
     out_key: str | None = None,
     backend: str = "pyg",
-    **kwargs,
+    aggr="mean",
 ):
     """
     Aggregate data in an AnnData object based on a previously constructed graph.
@@ -79,7 +79,7 @@ def aggregate(
         X = adata.obsm[obsm_key]
 
     if backend == "pyg":
-        aggr_fn = GraphAggregation(**kwargs)
+        aggr_fn = GraphAggregation(aggr)
 
         X = torch.tensor(X).float()
         edge_index = torch.tensor(adata.uns["graph"]["edge_index"])
@@ -95,10 +95,11 @@ def aggregate(
         A = scipy.sparse.csr_matrix(
             (np.ones(edge_index.shape[1]), (edge_index[0], edge_index[1])), shape=(N, N)
         )
-        A_mean = A / A.sum(1)
+        if aggr == "mean":
+            A = A / A.sum(1)
 
         for _ in range(n_layers):
-            X = A_mean @ X
+            X = A @ X
 
     if out_key is not None:
         adata.obsm[out_key] = to_numpy(X)
