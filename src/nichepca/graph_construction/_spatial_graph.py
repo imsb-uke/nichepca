@@ -209,7 +209,7 @@ def knn_graph(
 
 def distance_graph(
     adata: AnnData,
-    radius: int = 50,
+    radius: float = 50,
     obsm_key: str = "spatial",
     remove_self_loops: bool = False,
     p: int = 2,
@@ -223,7 +223,7 @@ def distance_graph(
     ----------
     adata : AnnData
         Annotated data object.
-    radius : int, default 50
+    radius : float, default 50
         Radius for the distance threshold.
     obsm_key : str, default "spatial"
         Key in `obsm` attribute where the spatial data is stored.
