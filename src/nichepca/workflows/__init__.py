@@ -1,1 +1,1 @@
-from ._nichepca import run_nichepca
+from ._nichepca import nichepca
