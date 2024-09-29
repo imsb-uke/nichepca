@@ -42,9 +42,16 @@ The `nichepca` functiopn also allows to customize the original `("norm", "log1p"
 ```python
 npc.wf.nichepca(adata, knn=25, pipeline=["log1p", "agg", "pca"])
 ```
-
-We found that higher number of neighbors e.g., `knn=25` lead to better results in brain tissue, while `knn=10` works well for kidney data. We recommend to qualitatively optimize these parameters on a small subset of your data.
-
+or with `"pca"` before `"agg"`:
+```python
+npc.wf.nichepca(adata, knn=25, pipeline=["norm", "log1p", "pca", "agg"])
+```
+or without `"pca"` at all:
+```python
+npc.wf.nichepca(adata, knn=25, pipeline=["norm", "log1p", "agg"])
+```
+## Setting parameters
+We found that higher number of neighbors e.g., `knn=25` lead to better results in brain tissue, while `knn=10` works well for kidney data. We recommend to qualitatively optimize these parameters on a small subset of your data. The number of PCs (`n_comps=30` by default) seems to have negligible effect on the results.
 ## Installation
 
 You need to have Python 3.10 or newer installed on your system. If you don't have
