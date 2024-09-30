@@ -24,6 +24,7 @@ def nichepca(
     delaunay: bool = False,
     n_comps: int = 30,
     obs_key: str | None = None,
+    obsm_key: str | None = None,
     sample_key: str | None = None,
     pipeline: tuple | list = ("norm", "log1p", "agg", "pca"),
     norm_per_sample: bool = True,
@@ -50,6 +51,8 @@ def nichepca(
         Number of principal components to compute.
     obs_key : str | None, optional
         Observation key to use for generating a new AnnData object.
+    obsm_key : str | None, optional
+        Observation matrix key to use as input.
     sample_key : str | None, optional
         Sample key to use for multi-sample graph construction.
     pipeline : tuple | list, optional
@@ -86,7 +89,7 @@ def nichepca(
         ), "pca must be executed after norm and log1p"
 
     # perform sanity check in case we are normalizing the data
-    if "norm" or "log1p" in pipeline and obs_key is None:
+    if "norm" or "log1p" in pipeline and obs_key is None and obsm_key is None:
         check_for_raw_counts(adata)
 
     # extract any additional kwargs that are not directed to the graph construction
@@ -108,18 +111,26 @@ def nichepca(
     # if an obs_key is provided generate a new AnnData
     if obs_key is not None:
         df = pd.get_dummies(adata.obs[obs_key], dtype=np.int8)
-        ad_tmp = sc.AnnData(
-            X=df.values,
-            obs=adata.obs,
-            var=pd.DataFrame(index=df.columns),
-            uns=adata.uns,
-        )
+        X = df.values
+        var = pd.DataFrame(index=df.columns)
         # remove normalization steps
         pipeline = [p for p in pipeline if p not in ["norm", "log1p"]]
         print(f"obs_key provided, running pipeline: {'->'.join(pipeline)}")
+    elif obsm_key is not None:
+        X = adata.obsm[obsm_key]
+        var = adata.var[[]]
     else:
-        ad_tmp = adata
+        X = adata.X
+        var = adata.var[[]]
         print(f"Running pipeline: {'->'.join(pipeline)}")
+
+    # create intermediate AnnData
+    ad_tmp = sc.AnnData(
+        X=X,
+        obs=adata.obs,
+        var=var,
+        uns=adata.uns,
+    )
 
     for fn in pipeline:
         if fn == "norm":
@@ -132,7 +143,20 @@ def nichepca(
         elif fn == "log1p":
             sc.pp.log1p(ad_tmp)
         elif fn == "agg":
-            aggregate(ad_tmp, backend=backend, aggr=aggr)
+            # if pca is executed before agg, we need to aggregate the pca results
+            if "X_pca_harmony" in ad_tmp.obsm:
+                obsm_key_agg = "X_pca_harmony"
+            elif "X_pca" in ad_tmp.obsm:
+                obsm_key_agg = "X_pca"
+            else:
+                obsm_key_agg = None
+            aggregate(
+                ad_tmp,
+                backend=backend,
+                aggr=aggr,
+                obsm_key=obsm_key_agg,
+                suffix="",
+            )
         elif fn == "pca":
             sc.tl.pca(ad_tmp, n_comps=n_comps)
             # run harmony if sample_key is provided and obs key is None
@@ -145,19 +169,15 @@ def nichepca(
 
     # extract the results and remove old keys
     if "X_pca_harmony" in ad_tmp.obsm:
-        X_npca = ad_tmp.obsm["X_pca_harmony"].copy()
-        del ad_tmp.obsm["X_pca_harmony"]
+        X_npca = ad_tmp.obsm["X_pca_harmony"]
     else:
-        X_npca = ad_tmp.obsm["X_pca"].copy()
-    del ad_tmp.obsm["X_pca"]
+        X_npca = ad_tmp.obsm["X_pca"]
 
     # store the results
     adata.obsm["X_npca"] = X_npca
-    adata.uns["npca"] = ad_tmp.uns["pca"].copy()
+    adata.uns["npca"] = ad_tmp.uns["pca"]
     adata.uns["npca"]["PCs"] = pd.DataFrame(
         data=ad_tmp.varm["PCs"],
         index=ad_tmp.var_names,
         columns=[f"PC{i}" for i in range(n_comps)],
     )
-    del ad_tmp.varm["PCs"]
-    del ad_tmp.uns["pca"]
