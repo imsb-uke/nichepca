@@ -39,6 +39,21 @@ def test_nichepca_single():
 
     assert np.all(adata_1.obsm["X_npca"] == ad_tmp.obsm["X_pca"])
 
+    # test with pca before agg
+    adata_1 = generate_dummy_adata()
+    npc.wf.nichepca(
+        adata_1, knn=10, n_comps=30, pipeline=["norm", "log1p", "pca", "agg"]
+    )
+
+    adata_2 = generate_dummy_adata()
+    npc.gc.knn_graph(adata_2, knn=10)
+    sc.pp.normalize_total(adata_2)
+    sc.pp.log1p(adata_2)
+    sc.pp.pca(adata_2, n_comps=30)
+    npc.ne.aggregate(adata_2, obsm_key="X_pca", suffix="")
+
+    assert np.all(adata_1.obsm["X_npca"] == adata_2.obsm["X_pca"])
+
 
 def test_nichepca_multi_sample():
     adata_1 = generate_dummy_adata()
