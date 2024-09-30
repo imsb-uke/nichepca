@@ -15,17 +15,43 @@ Package for PCA-based spatial domain identification in single-cell spatial trans
 
 -   [API documentation][link-api]. -->
 
-Given an AnnData object `adata`, you can run nichepca as follows:
+Given an AnnData object `adata`, you can run nichepca starting from raw counts as follows:
 
 ```python
 import scanpy as sc
 import nichepca as npc
 
-npc.wf.run_nichepca(adata, knn=5)
-sc.pp.neighbors(adata)
+npc.wf.nichepca(adata, knn=25)
+sc.pp.neighbors(adata, use_rep="X_npca")
 sc.tl.leiden(adata, resolution=0.5)
 ```
 
+If you have multiple samples in `adata.obs['sample']`, you can provide the key `sample` to `npc.wf.nichepca`:
+
+```python
+npc.wf.nichepca(adata, knn=25, sample_key="sample")
+```
+
+If you have cell type labels in `adata.obs['cell_type']`, you can directly provide them to `nichepca` as follows:
+
+```python
+npc.wf.nichepca(adata, knn=25, obs_key='cell_type')
+```
+
+The `nichepca` functiopn also allows to customize the original `("norm", "log1p", "agg", "pca")` pipeline, e.g., without median normalization:
+```python
+npc.wf.nichepca(adata, knn=25, pipeline=["log1p", "agg", "pca"])
+```
+or with `"pca"` before `"agg"`:
+```python
+npc.wf.nichepca(adata, knn=25, pipeline=["norm", "log1p", "pca", "agg"])
+```
+or without `"pca"` at all:
+```python
+npc.wf.nichepca(adata, knn=25, pipeline=["norm", "log1p", "agg"])
+```
+## Setting parameters
+We found that higher number of neighbors e.g., `knn=25` lead to better results in brain tissue, while `knn=10` works well for kidney data. We recommend to qualitatively optimize these parameters on a small subset of your data. The number of PCs (`n_comps=30` by default) seems to have negligible effect on the results.
 ## Installation
 
 You need to have Python 3.10 or newer installed on your system. If you don't have
