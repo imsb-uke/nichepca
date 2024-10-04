@@ -161,6 +161,9 @@ def nichepca(
                 suffix="",
             )
         elif fn == "pca":
+            # pca requires float dtype
+            if "float" not in str(ad_tmp.X.dtype):
+                ad_tmp.X = ad_tmp.X.astype(np.float32)
             sc.tl.pca(ad_tmp, n_comps=n_comps)
             # run harmony if sample_key is provided and obs key is None
             if sample_key is not None and obs_key is None and allow_harmony:
