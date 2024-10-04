@@ -68,6 +68,22 @@ def test_nichepca_single():
 
     assert np.all(X_npca_0 == X_npca_1)
 
+    # test with pca on raw counts
+    pipeline = ("pca", "agg")
+
+    adata = generate_dummy_adata()
+    npc.wf.nichepca(adata, knn=5, pipeline=pipeline)
+    X_npca_0 = adata.obsm["X_npca"]
+
+    adata = generate_dummy_adata()
+    adata.X = adata.X.astype(np.float32)
+    sc.pp.pca(adata, n_comps=30)
+    npc.gc.knn_graph(adata, knn=5)
+    npc.ne.aggregate(adata, obsm_key="X_pca")
+    X_npca_1 = adata.obsm["X_pca_agg"]
+
+    assert np.all(X_npca_0 == X_npca_1)
+
 
 def test_nichepca_multi_sample():
     adata_1 = generate_dummy_adata()
