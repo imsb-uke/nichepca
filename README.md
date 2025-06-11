@@ -7,7 +7,7 @@
 [link-tests]: https://github.com/imsb-uke/nichepca/actions/workflows/test.yaml
 [badge-docs]: https://img.shields.io/readthedocs/nichepca
 
-Package for PCA-based spatial domain identification in single-cell spatial transcriptomics data
+Package for PCA-based spatial domain identification in single-cell spatial transcriptomics data. The corresonding manuscript was published in [Bioinformatics](https://academic.oup.com/bioinformatics/article/41/1/btaf005/7945104?).
 
 ## Getting started
 
@@ -91,7 +91,19 @@ If you found a bug, please use the [issue tracker][issue-tracker].
 
 ## Citation
 
-> t.b.a
+If you use NichePCA in your research, please cite:
+```
+@article{schaub2025pca,
+  title={PCA-based spatial domain identification with state-of-the-art performance},
+  author={Schaub, Darius P and Yousefi, Behnam and Kaiser, Nico and Khatri, Robin and Puelles, Victor G and Krebs, Christian F and Panzer, Ulf and Bonn, Stefan},
+  journal={Bioinformatics},
+  volume={41},
+  number={1},
+  pages={btaf005},
+  year={2025},
+  publisher={Oxford University Press}
+}
+```
 
 [scverse-discourse]: https://discourse.scverse.org/
 [issue-tracker]: https://github.com/imsb-uke/nichepca/issues
