@@ -170,3 +170,59 @@ def leiden_with_nclusters(
 
         # Update to the mid point
         cur_res = (min_res + max_res) / 2
+
+
+def leiden_unique(
+    adata: AnnData,
+    use_rep: str | None = None,
+    resolution: float = 1.0,
+    n_neighbors: int = 15,
+    key_added: str = "leiden",
+    flavor: str = "igraph",
+    n_iterations: int = 2,
+    **kwargs,
+):
+    """
+    Perform Leiden clustering with duplicate embeddings.
+
+    Parameters
+    ----------
+    adata : AnnData
+        Anndata object with the graph information.
+    use_rep : str, optional
+        The embedding to use for clustering, by default None.
+    resolution : float, optional
+        The resolution parameter for the Leiden algorithm, by default 1.0.
+    n_neighbors : int, optional
+        The number of neighbors to use for the Leiden algorithm, by default 15.
+    key_added : str, optional
+        The key to store the cluster assignments in the adata object, by default "leiden".
+    flavor : str, optional
+        The flavor of the Leiden algorithm to use, by default "igraph".
+    n_iterations : int, optional
+        The number of iterations for the Leiden algorithm, by default 2.
+    **kwargs : dict
+        Additional keyword arguments to be passed to sc.tl.leiden.
+
+    Returns
+    -------
+    None
+    """
+    X_rep = adata.obsm[use_rep]
+    _, unique_indices, inverse_indices = np.unique(
+        X_rep, axis=0, return_index=True, return_inverse=True
+    )
+    print(f"Found {len(unique_indices)} unique embeddings from a total of {len(X_rep)}")
+
+    ad_sub = adata[unique_indices].copy()
+    sc.pp.neighbors(ad_sub, use_rep=use_rep, n_neighbors=n_neighbors)
+    sc.tl.leiden(
+        ad_sub,
+        resolution=resolution,
+        flavor=flavor,
+        n_iterations=n_iterations,
+        key_added=key_added,
+        **kwargs,
+    )
+    labels = ad_sub.obs[key_added].iloc[inverse_indices].copy()
+    adata.obs[key_added] = labels.values
