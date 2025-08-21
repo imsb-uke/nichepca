@@ -119,6 +119,11 @@ def nichepca(
         # remove normalization steps
         pipeline = [p for p in pipeline if p not in ["norm", "log1p"]]
         print(f"obs_key provided, running pipeline: {'->'.join(pipeline)}")
+        if "pca" in pipeline and n_comps > X.shape[1]:
+            n_comps = X.shape[1]
+            print(
+                f"n_comps is larger than the number of features, setting n_comps to {n_comps}"
+            )
     elif obsm_key is not None:
         X = adata.obsm[obsm_key]
         var = adata.var[[]]
