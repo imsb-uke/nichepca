@@ -25,18 +25,22 @@ npc.wf.nichepca(adata, knn=25)
 sc.pp.neighbors(adata, use_rep="X_npca")
 sc.tl.leiden(adata, resolution=0.5)
 ```
+### Multi-sample support
 
-If you have multiple samples in `adata.obs['sample']`, you can provide the key `sample` to `npc.wf.nichepca`:
+If you have multiple samples in `adata.obs['sample']`, you can provide the key `sample` to `npc.wf.nichepca` this uses harmony by default:
 
 ```python
 npc.wf.nichepca(adata, knn=25, sample_key="sample")
 ```
 
-If you have cell type labels in `adata.obs['cell_type']`, you can directly provide them to `nichepca` as follows:
+If you have cell type labels in `adata.obs['cell_type']`, you can directly provide them to `nichepca` as follows (we found this sometimes works better for multi-sample domain identification). However, in this case we need to run `npc.cl.leiden_unique` to handle potential duplicate embeddings:
 
 ```python
-npc.wf.nichepca(adata, knn=25, obs_key='cell_type')
+npc.wf.nichepca(adata, knn=25, obs_key='cell_type', sample_key="sample")
+npc.cl.leiden_unique(adata, resolution=0.5)
 ```
+
+### Customization
 
 The `nichepca` functiopn also allows to customize the original `("norm", "log1p", "agg", "pca")` pipeline, e.g., without median normalization:
 ```python
@@ -50,6 +54,7 @@ or without `"pca"` at all:
 ```python
 npc.wf.nichepca(adata, knn=25, pipeline=["norm", "log1p", "agg"])
 ```
+
 ## Setting parameters
 We found that higher number of neighbors e.g., `knn=25` lead to better results in brain tissue, while `knn=10` works well for kidney data. We recommend to qualitatively optimize these parameters on a small subset of your data. The number of PCs (`n_comps=30` by default) seems to have negligible effect on the results.
 ## Installation
@@ -64,21 +69,23 @@ conda create -n npc-env python=3.10 -y
 conda activate npc-env
 ```
 
-There are several options to install nichepca:
-
-<!--
-1) Install the latest release of `nichepca` from [PyPI][link-pypi]:
-
-```bash
-pip install nichepca
-```
--->
-
-1. Install the latest development version:
+Install the latest development version:
 
 ```bash
 pip install git+https://github.com/imsb-uke/nichepca.git@main
 ```
+
+## Contributing
+
+If you want to contribute you can follow this [guide](https://scanpy.readthedocs.io/en/latest/dev/index.html). In short fork the repository, setup a dev environment using this command:
+
+```bash
+conda create -n npc-dev python=3.10 -y
+conda activate npc-dev
+git clone https://github.com/{your-username}/nichepca.git
+pip install -e ".[dev, test]"
+```
+And then make your changes, run the tests and submit a pull request.
 
 ## Release notes
 
@@ -86,8 +93,7 @@ See the [changelog][changelog].
 
 ## Contact
 
-For questions and help requests, you can reach out in the [scverse discourse][scverse-discourse].
-If you found a bug, please use the [issue tracker][issue-tracker].
+For questions, help requests, and bug reports, please use the [issue tracker][issue-tracker].
 
 ## Citation
 
