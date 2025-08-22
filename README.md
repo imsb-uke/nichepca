@@ -37,7 +37,7 @@ If you have cell type labels in `adata.obs['cell_type']`, you can directly provi
 
 ```python
 npc.wf.nichepca(adata, knn=25, obs_key='cell_type', sample_key="sample")
-npc.cl.leiden_unique(adata, resolution=0.5)
+npc.cl.leiden_unique(adata, use_rep="X_npca", resolution=0.5, n_neighbors=15)
 ```
 
 ### Customization
