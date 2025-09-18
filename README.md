@@ -1,13 +1,20 @@
 # NichePCA
 
+[![Version](https://img.shields.io/pypi/v/nichepca)](https://pypi.org/project/nichepca/)
+[![License](https://img.shields.io/pypi/l/nichepca)](https://github.com/imsb-uke/nichepca)
+[![Python Version Required](https://img.shields.io/pypi/pyversions/nichepca)](https://pypi.org/project/nichepca/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![PyPI downloads](https://img.shields.io/pepy/dt/nichepca?label=PyPI%20downloads&logo=pypi)](https://pepy.tech/project/nichepca)
 [![Tests][badge-tests]][link-tests]
+
 <!-- [![Documentation][badge-docs]][link-docs] -->
 
 [badge-tests]: https://img.shields.io/github/actions/workflow/status/imsb-uke/nichepca/test.yaml?branch=main
 [link-tests]: https://github.com/imsb-uke/nichepca/actions/workflows/test.yaml
 [badge-docs]: https://img.shields.io/readthedocs/nichepca
 
-Package for PCA-based spatial domain identification in single-cell spatial transcriptomics data. The corresonding manuscript was published in [Bioinformatics](https://academic.oup.com/bioinformatics/article/41/1/btaf005/7945104?).
+Package for PCA-based spatial domain identification in single-cell spatial transcriptomics data. The corresponding manuscript was published in [Bioinformatics](https://academic.oup.com/bioinformatics/article/41/1/btaf005/7945104?).
 
 ## Getting started
 
