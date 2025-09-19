@@ -16,6 +16,30 @@
 
 Package for PCA-based spatial domain identification in single-cell spatial transcriptomics data. The corresponding manuscript was published in [Bioinformatics](https://academic.oup.com/bioinformatics/article/41/1/btaf005/7945104?).
 
+## Installation
+
+You need to have Python 3.10 or newer installed on your system. If you don't have
+Python installed, we recommend installing [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge) or [Miniconda](https://docs.anaconda.com/miniconda/miniconda-install/).
+
+To create a new conda environment with Python 3.11:
+
+```bash
+conda create -n npc-env python=3.11 -y
+conda activate npc-env
+```
+
+NichePCA can be installed from PyPI:
+
+```bash
+pip install nichepca
+```
+
+To install the latest development version:
+
+```bash
+pip install git+https://github.com/imsb-uke/nichepca.git@main
+```
+
 ## Getting started
 
 <!-- Please refer to the [documentation][link-docs]. In particular, the
@@ -62,25 +86,8 @@ or without `"pca"` at all:
 npc.wf.nichepca(adata, knn=25, pipeline=["norm", "log1p", "agg"])
 ```
 
-## Setting parameters
+## Hyperparameter choice
 We found that higher number of neighbors e.g., `knn=25` lead to better results in brain tissue, while `knn=10` works well for kidney data. We recommend to qualitatively optimize these parameters on a small subset of your data. The number of PCs (`n_comps=30` by default) seems to have negligible effect on the results.
-## Installation
-
-You need to have Python 3.10 or newer installed on your system. If you don't have
-Python installed, we recommend installing [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge) or [Miniconda](https://docs.anaconda.com/miniconda/miniconda-install/).
-
-To create a new conda environment with Python 3.10:
-
-```bash
-conda create -n npc-env python=3.10 -y
-conda activate npc-env
-```
-
-Install the latest development version:
-
-```bash
-pip install git+https://github.com/imsb-uke/nichepca.git@main
-```
 
 ## Contributing
 
