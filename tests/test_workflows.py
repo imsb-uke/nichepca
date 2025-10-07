@@ -1,32 +1,12 @@
-import importlib
-import importlib.metadata
-
 import numpy as np
 import pandas as pd
-import pytest
 import scanpy as sc
 from utils import generate_dummy_adata
 
-
-@pytest.fixture(scope="session")
-def npc():
-    original_version = importlib.metadata.version
-
-    def fake_version(name: str) -> str:
-        if name == "nichepca":
-            return "0.0.0"
-        return original_version(name)
-
-    importlib.metadata.version = fake_version
-    try:
-        module = importlib.import_module("nichepca")
-    finally:
-        importlib.metadata.version = original_version
-
-    return module
+import nichepca as npc
 
 
-def test_nichepca_single(npc):
+def test_nichepca_single():
     adata_1 = generate_dummy_adata()
     npc.wf.nichepca(adata_1, knn=10, n_comps=30)
 
@@ -110,7 +90,7 @@ def test_nichepca_single(npc):
     assert np.all(X_npca_0 == X_npca_1)
 
 
-def test_nichepca_multi_sample(npc):
+def test_nichepca_multi_sample():
     adata_1 = generate_dummy_adata()
     npc.wf.nichepca(adata_1, knn=10, n_comps=30, sample_key="sample")
 
