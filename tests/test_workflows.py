@@ -68,6 +68,11 @@ def test_nichepca_single():
 
     assert np.all(X_npca_0 == X_npca_1)
 
+    # test graph removal
+    adata = generate_dummy_adata()
+    npc.wf.nichepca(adata, knn=5, pipeline=pipeline, remove_graph=True)
+    assert "graph" not in adata.uns
+
     # test with pca on raw counts
     pipeline = ("pca", "agg")
 

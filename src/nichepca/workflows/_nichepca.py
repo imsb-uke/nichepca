@@ -32,6 +32,7 @@ def nichepca(
     aggr: str = "mean",
     allow_harmony: bool = True,
     max_iter_harmony: int = 50,
+    remove_graph: bool = False,
     **kwargs,
 ):
     """
@@ -67,6 +68,9 @@ def nichepca(
         Whether to allow Harmony integration.
     max_iter_harmony : int, optional
         Maximum number of iterations for Harmony.
+    remove_graph : bool, optional
+        Whether to remove the constructed graph from ``adata.uns`` after the workflow
+        completes.
     **kwargs : dict
         Additional keyword arguments.
 
@@ -195,3 +199,6 @@ def nichepca(
             index=ad_tmp.var_names,
             columns=[f"PC{i}" for i in range(n_comps)],
         )
+
+    if remove_graph and "graph" in adata.uns:
+        del adata.uns["graph"]

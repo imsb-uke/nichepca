@@ -1,4 +1,4 @@
-from importlib.metadata import version
+from importlib.metadata import PackageNotFoundError, version
 
 from . import clustering as cl
 from . import graph_construction as gc
@@ -8,4 +8,7 @@ from . import workflows as wf
 
 __all__ = ["gc", "ne", "cl", "wf", "utils"]
 
-__version__ = version("nichepca")
+try:
+    __version__ = version("nichepca")
+except PackageNotFoundError:  # pragma: no cover - fallback for local development
+    __version__ = "0+unknown"
