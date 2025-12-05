@@ -14,11 +14,6 @@
 
 NichePCA is a package for PCA-based spatial domain identification in single-cell spatial transcriptomics data. The corresponding manuscript was published in [Bioinformatics](https://academic.oup.com/bioinformatics/article/41/1/btaf005/7945104?).
 
-## Getting started
-
-Please refer to the [documentation][],
-in particular, the [API documentation][].
-
 ## Installation
 
 You need to have Python 3.11 or newer installed on your system.
@@ -42,9 +37,7 @@ pip install git+https://github.com/imsb-uke/nichepca.git@main
 
 ## Getting started
 
-<!-- Please refer to the [documentation][link-docs]. In particular, the
-
--   [API documentation][link-api]. -->
+Please refer to the [documentation][]. In particular, the [API documentation][].
 
 Given an AnnData object `adata`, you can run nichepca starting from raw counts as follows:
 
@@ -73,7 +66,7 @@ npc.cl.leiden_unique(adata, use_rep="X_npca", resolution=0.5, n_neighbors=15)
 
 ### Customization
 
-The `nichepca` functiopn also allows to customize the original `("norm", "log1p", "agg", "pca")` pipeline, e.g., without median normalization:
+The `nichepca` function also allows to customize the original `("norm", "log1p", "agg", "pca")` pipeline, e.g., without median normalization:
 ```python
 npc.wf.nichepca(adata, knn=25, pipeline=["log1p", "agg", "pca"])
 ```
@@ -94,10 +87,9 @@ We found that higher number of neighbors e.g., `knn=25` lead to better results i
 If you want to contribute you can follow this [guide](https://scanpy.readthedocs.io/en/latest/dev/index.html). In short fork the repository, setup a dev environment using this command:
 
 ```bash
-conda create -n npc-dev python=3.10 -y
-conda activate npc-dev
 git clone https://github.com/{your-username}/nichepca.git
-pip install -e ".[dev, test]"
+cd nichepca
+uv sync --all-extras
 ```
 And then make your changes, run the tests and submit a pull request.
 
