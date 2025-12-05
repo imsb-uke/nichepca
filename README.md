@@ -6,35 +6,35 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![PyPI downloads](https://img.shields.io/pepy/dt/nichepca?label=PyPI%20downloads&logo=pypi)](https://pepy.tech/project/nichepca)
-[![Tests][badge-tests]][link-tests]
-
-<!-- [![Documentation][badge-docs]][link-docs] -->
+[![Tests][badge-tests]][tests]
+[![Documentation][badge-docs]][documentation]
 
 [badge-tests]: https://img.shields.io/github/actions/workflow/status/imsb-uke/nichepca/test.yaml?branch=main
-[link-tests]: https://github.com/imsb-uke/nichepca/actions/workflows/test.yaml
 [badge-docs]: https://img.shields.io/readthedocs/nichepca
 
-Package for PCA-based spatial domain identification in single-cell spatial transcriptomics data. The corresponding manuscript was published in [Bioinformatics](https://academic.oup.com/bioinformatics/article/41/1/btaf005/7945104?).
+NichePCA is a package for PCA-based spatial domain identification in single-cell spatial transcriptomics data. The corresponding manuscript was published in [Bioinformatics](https://academic.oup.com/bioinformatics/article/41/1/btaf005/7945104?).
+
+## Getting started
+
+Please refer to the [documentation][],
+in particular, the [API documentation][].
 
 ## Installation
 
-You need to have Python 3.10 or newer installed on your system. If you don't have
-Python installed, we recommend installing [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge) or [Miniconda](https://docs.anaconda.com/miniconda/miniconda-install/).
+You need to have Python 3.11 or newer installed on your system.
+If you don't have Python installed, we recommend installing [uv][].
 
-To create a new conda environment with Python 3.11:
+There are several alternative options to install nichepca:
 
-```bash
-conda create -n npc-env python=3.11 -y
-conda activate npc-env
-```
 
-NichePCA can be installed from PyPI:
+1. Install the latest release of `nichepca` from [PyPI][]:
 
 ```bash
 pip install nichepca
 ```
 
-To install the latest development version:
+
+2. Install the latest development version:
 
 ```bash
 pip install git+https://github.com/imsb-uke/nichepca.git@main
@@ -103,11 +103,12 @@ And then make your changes, run the tests and submit a pull request.
 
 ## Release notes
 
-See the [changelog][changelog].
+See the [changelog][].
 
 ## Contact
 
-For questions, help requests, and bug reports, please use the [issue tracker][issue-tracker].
+For questions and help requests, you can reach out in the [scverse discourse][].
+If you found a bug, please use the [issue tracker][].
 
 ## Citation
 
@@ -124,10 +125,10 @@ If you use NichePCA in your research, please cite:
   publisher={Oxford University Press}
 }
 ```
-
-[scverse-discourse]: https://discourse.scverse.org/
-[issue-tracker]: https://github.com/imsb-uke/nichepca/issues
-[changelog]: https://nichepca.readthedocs.io/latest/changelog.html
-[link-docs]: https://nichepca.readthedocs.io
-[link-api]: https://nichepca.readthedocs.io/latest/api.html
-[link-pypi]: https://pypi.org/project/nichepca
+[scverse discourse]: https://discourse.scverse.org/
+[issue tracker]: https://github.com/imsb-uke/nichepca/issues
+[tests]: https://github.com/imsb-uke/nichepca/actions/workflows/test.yaml
+[documentation]: https://nichepca.readthedocs.io
+[changelog]: https://nichepca.readthedocs.io/en/latest/changelog.html
+[api documentation]: https://nichepca.readthedocs.io/en/latest/api.html
+[pypi]: https://pypi.org/project/nichepca

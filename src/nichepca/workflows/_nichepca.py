@@ -91,9 +91,9 @@ def nichepca(
         norm_index = np.argmax(np.array(pipeline) == "norm")
         log1p_index = np.argmax(np.array(pipeline) == "log1p")
         # argmax returns 0 if not found
-        assert (
-            norm_index <= pca_index and log1p_index <= pca_index
-        ), "PCA must be executed after both norm and log1p."
+        assert norm_index <= pca_index and log1p_index <= pca_index, (
+            "PCA must be executed after both norm and log1p."
+        )
 
     # perform sanity check in case we are normalizing the data
     if "norm" or "log1p" in pipeline and obs_key is None and obsm_key is None:

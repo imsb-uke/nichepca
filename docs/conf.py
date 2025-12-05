@@ -5,10 +5,13 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 # -- Path setup --------------------------------------------------------------
+import shutil
 import sys
 from datetime import datetime
 from importlib.metadata import metadata
 from pathlib import Path
+
+from sphinxcontrib import katex
 
 HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE / "extensions"))
@@ -19,7 +22,7 @@ sys.path.insert(0, str(HERE / "extensions"))
 # NOTE: If you installed your project in editable mode, this might be stale.
 #       If this is the case, reinstall it to refresh the metadata
 info = metadata("nichepca")
-project_name = info["Name"]
+project = info["Name"]
 author = info["Author"]
 copyright = f"{datetime.now():%Y}, {author}."
 version = info["Version"]
@@ -37,7 +40,7 @@ needs_sphinx = "4.0"
 html_context = {
     "display_github": True,  # Integrate GitHub
     "github_user": "imsb-uke",
-    "github_repo": "https://github.com/imsb-uke/nichepca",
+    "github_repo": project,
     "github_version": "main",
     "conf_py_path": "/docs/",
 }
@@ -54,8 +57,9 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
     "sphinxcontrib.bibtex",
+    "sphinxcontrib.katex",
     "sphinx_autodoc_typehints",
-    "sphinx.ext.mathjax",
+    "sphinx_tabs.tabs",
     "IPython.sphinxext.ipython_console_highlighting",
     "sphinxext.opengraph",
     *[p.stem for p in (HERE / "extensions").glob("*.py")],
@@ -83,6 +87,9 @@ nb_output_stderr = "remove"
 nb_execution_mode = "off"
 nb_merge_streams = True
 typehints_defaults = "braces"
+# Configure type hints to handle forward references
+typehints_fully_qualified = False
+typehints_document_rtype = True
 
 source_suffix = {
     ".rst": "restructuredtext",
@@ -91,9 +98,13 @@ source_suffix = {
 }
 
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3", None),
+    # TODO: replace `3.13` with `3` once ReadTheDocs supports building with Python 3.14
+    "python": ("https://docs.python.org/3.13", None),
     "anndata": ("https://anndata.readthedocs.io/en/stable/", None),
+    "scanpy": ("https://scanpy.readthedocs.io/en/stable/", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
+    "torch": ("https://pytorch.org/docs/stable/", None),
 }
 
 # List of patterns, relative to source directory, that match files and
@@ -111,7 +122,7 @@ html_theme = "sphinx_book_theme"
 html_static_path = ["_static"]
 html_css_files = ["css/custom.css"]
 
-html_title = project_name
+html_title = project
 
 html_theme_options = {
     "repository_url": repository_url,
@@ -121,9 +132,27 @@ html_theme_options = {
 }
 
 pygments_style = "default"
+katex_prerender = shutil.which(katex.NODEJS_BINARY) is not None
 
 nitpick_ignore = [
     # If building the documentation fails because of a missing link that is outside your control,
     # you can add an exception to this list.
     #     ("py:class", "igraph.Graph"),
+    # Types imported inside TYPE_CHECKING blocks
+    ("py:class", "AnnData"),
+    # Type hints that may not resolve correctly
+    ("py:class", "optional"),
+    ("py:class", "np.ndarray"),
+    ("py:class", "torch.Tensor"),
+    ("py:class", "sp.spmatrix"),
+]
+
+# Suppress warnings about forward references that can't be resolved at build time
+# (e.g., types imported inside TYPE_CHECKING blocks)
+suppress_warnings = [
+    # "autodoc.import_object",
+    # "ref.obj",
+    # "sphinx_autodoc_typehints.forward_reference",
+    # Suppress warnings about default values being incorrectly parsed as class references
+    "ref.class",
 ]

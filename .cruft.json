@@ -1,28 +1,42 @@
 {
   "template": "https://github.com/scverse/cookiecutter-scverse",
-  "commit": "aa877587e59c855e2464d09ed7678af00999191a",
+  "commit": "2df78e3b5cf167386f9c8455895bec9987608538",
   "checkout": null,
   "context": {
     "cookiecutter": {
       "project_name": "nichepca",
       "package_name": "nichepca",
-      "project_description": "Package for PCA-based spatial domain identification in single-cell spatial transcriptomics data",
+      "project_description": "Package for PCA-based spatial domain identification in single-cell spatial transcriptomics data.",
       "author_full_name": "Darius P. Schaub",
       "author_email": "schaub.darius@gmail.com",
       "github_user": "imsb-uke",
-      "project_repo": "https://github.com/imsb-uke/nichepca",
+      "github_repo": "nichepca",
       "license": "MIT License",
+      "ide_integration": true,
       "_copy_without_render": [
         ".github/workflows/build.yaml",
         ".github/workflows/test.yaml",
         "docs/_templates/autosummary/**.rst"
+      ],
+      "_exclude_on_template_update": [
+        "CHANGELOG.md",
+        "LICENSE",
+        "README.md",
+        "docs/api.md",
+        "docs/index.md",
+        "docs/notebooks/example.ipynb",
+        "docs/references.bib",
+        "docs/references.md",
+        "src/**",
+        "tests/**"
       ],
       "_render_devdocs": false,
       "_jinja2_env_vars": {
         "lstrip_blocks": true,
         "trim_blocks": true
       },
-      "_template": "https://github.com/scverse/cookiecutter-scverse"
+      "_template": "https://github.com/scverse/cookiecutter-scverse",
+      "_commit": "2df78e3b5cf167386f9c8455895bec9987608538"
     }
   },
   "directory": null

@@ -10,8 +10,6 @@ from scipy.sparse import csr_matrix
 from tqdm.auto import tqdm
 
 if TYPE_CHECKING:
-    from typing import list
-
     from anndata import AnnData
 
 
@@ -33,7 +31,16 @@ def leiden_fn(adata: AnnData, resolution: float, **kwargs):
     pd.DataFrame
         Pandas DataFrame with the cluster assignments for each cell.
     """
-    sc.tl.leiden(adata, resolution=resolution, key_added="leiden", **kwargs)
+    flavor = kwargs.pop("flavor", "igraph")
+    n_iterations = kwargs.pop("n_iterations", 2 if flavor == "igraph" else -1)
+    sc.tl.leiden(
+        adata,
+        resolution=resolution,
+        key_added="leiden",
+        flavor=flavor,
+        n_iterations=n_iterations,
+        **kwargs,
+    )
     return adata.obs[["leiden"]]
 
 
@@ -60,7 +67,7 @@ def leiden_multires(
     n_jobs : int, optional
         Number of jobs to run in parallel, by default -1.
     prefix : str, optional
-        Prefix to be added to the column names, by default "leiden_".
+        Prefix to be added to the column names, by default ``"leiden_"``.
     return_leiden : bool, optional
         Whether to return the cluster assignments as a DataFrame, by default True.
 
@@ -144,8 +151,18 @@ def leiden_with_nclusters(
 
     cur_res = rng.uniform(min_res, max_res)
 
+    flavor = kwargs.pop("flavor", "igraph")
+    n_iterations = kwargs.pop("n_iterations", 2 if flavor == "igraph" else -1)
+
     for i in range(max_iter):
-        sc.tl.leiden(adata, resolution=cur_res, key_added=key_added, **kwargs)
+        sc.tl.leiden(
+            adata,
+            resolution=cur_res,
+            key_added=key_added,
+            flavor=flavor,
+            n_iterations=n_iterations,
+            **kwargs,
+        )
 
         # if min_cells provided counts only clusters with more than min_cells
         cluster_counts = adata.obs[key_added].value_counts()
