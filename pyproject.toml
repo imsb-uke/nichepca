@@ -94,7 +94,7 @@ matrix.deps.env-vars = [
 ]
 
 [tool.ruff]
-line-length = 120
+line-length = 88
 src = [ "src" ]
 extend-include = [ "*.ipynb" ]
 
