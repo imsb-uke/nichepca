@@ -1,4 +1,4 @@
-# NichePCA
+# NichePCA: PCA-based spatial domain identification with state-of-the-art performance
 
 [![Version](https://img.shields.io/pypi/v/nichepca)](https://pypi.org/project/nichepca/)
 [![License](https://img.shields.io/pypi/l/nichepca)](https://github.com/imsb-uke/nichepca)
