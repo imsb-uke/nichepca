@@ -87,6 +87,9 @@ nb_output_stderr = "remove"
 nb_execution_mode = "off"
 nb_merge_streams = True
 typehints_defaults = "braces"
+# Configure type hints to handle forward references
+typehints_fully_qualified = False
+typehints_document_rtype = True
 
 source_suffix = {
     ".rst": "restructuredtext",
@@ -100,6 +103,8 @@ intersphinx_mapping = {
     "anndata": ("https://anndata.readthedocs.io/en/stable/", None),
     "scanpy": ("https://scanpy.readthedocs.io/en/stable/", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
+    "torch": ("https://pytorch.org/docs/stable/", None),
 }
 
 # List of patterns, relative to source directory, that match files and
@@ -133,4 +138,21 @@ nitpick_ignore = [
     # If building the documentation fails because of a missing link that is outside your control,
     # you can add an exception to this list.
     #     ("py:class", "igraph.Graph"),
+    # Types imported inside TYPE_CHECKING blocks
+    ("py:class", "AnnData"),
+    # Type hints that may not resolve correctly
+    ("py:class", "optional"),
+    ("py:class", "np.ndarray"),
+    ("py:class", "torch.Tensor"),
+    ("py:class", "sp.spmatrix"),
+]
+
+# Suppress warnings about forward references that can't be resolved at build time
+# (e.g., types imported inside TYPE_CHECKING blocks)
+suppress_warnings = [
+    # "autodoc.import_object",
+    # "ref.obj",
+    # "sphinx_autodoc_typehints.forward_reference",
+    # Suppress warnings about default values being incorrectly parsed as class references
+    "ref.class",
 ]
