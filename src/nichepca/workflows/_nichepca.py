@@ -132,7 +132,7 @@ def nichepca(
         X = adata.obsm[obsm_key]
         var = adata.var[[]]
     else:
-        X = adata.X
+        X = adata.X.copy()
         var = adata.var[[]]
         print(f"Running pipeline: {'->'.join(pipeline)}")
 
