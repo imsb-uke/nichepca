@@ -4,7 +4,7 @@ requires = [ "hatchling" ]
 
 [project]
 name = "nichepca"
-version = "0.0.2"
+version = "0.0.3"
 description = "Package for PCA-based spatial domain identification in single-cell spatial transcriptomics data."
 readme = "README.md"
 license = { file = "LICENSE" }
