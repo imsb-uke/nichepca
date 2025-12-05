@@ -10,8 +10,6 @@ from scipy.sparse import csr_matrix
 from tqdm.auto import tqdm
 
 if TYPE_CHECKING:
-    from typing import list
-
     from anndata import AnnData
 
 
@@ -69,7 +67,7 @@ def leiden_multires(
     n_jobs : int, optional
         Number of jobs to run in parallel, by default -1.
     prefix : str, optional
-        Prefix to be added to the column names, by default "leiden_".
+        Prefix to be added to the column names, by default ``"leiden_"``.
     return_leiden : bool, optional
         Whether to return the cluster assignments as a DataFrame, by default True.
 
