@@ -58,16 +58,16 @@ sc.tl.leiden(adata, resolution=0.5)
 ```
 ### Multi-sample support
 
-If you have multiple samples in `adata.obs['sample']`, you can provide the key `sample` to `npc.wf.nichepca` this uses harmony by default:
+If you have multiple samples in `adata.obs["sample"]`, you can provide the key `sample` to `npc.wf.nichepca` this uses harmony by default:
 
 ```python
 npc.wf.nichepca(adata, knn=25, sample_key="sample")
 ```
 
-If you have cell type labels in `adata.obs['cell_type']`, you can directly provide them to `nichepca` as follows (we found this sometimes works better for multi-sample domain identification). However, in this case we need to run `npc.cl.leiden_unique` to handle potential duplicate embeddings:
+If you have cell type labels in `adata.obs["cell_type"]`, you can directly provide them to `nichepca` as follows (we found this sometimes works better for multi-sample domain identification). However, in this case we need to run `npc.cl.leiden_unique` to handle potential duplicate embeddings:
 
 ```python
-npc.wf.nichepca(adata, knn=25, obs_key='cell_type', sample_key="sample")
+npc.wf.nichepca(adata, knn=25, obs_key="cell_type", sample_key="sample")
 npc.cl.leiden_unique(adata, use_rep="X_npca", resolution=0.5, n_neighbors=15)
 ```
 
