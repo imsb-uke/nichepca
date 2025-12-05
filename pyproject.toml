@@ -24,6 +24,7 @@ classifiers = [
 dependencies = [
   "harmonypy (>=0.0.10,<0.0.11)",
   "leidenalg (>=0.10.2,<0.11.0)",
+  "numpy (<2.3.6)",  # Constrain to <2.3.6 until numba fully supports higher versions
   "scanpy (>=1.11.4,<2.0.0)",
   # for debug logging (referenced from the issue template)
   "session-info2",
