@@ -4,7 +4,7 @@ requires = [ "hatchling" ]
 
 [project]
 name = "nichepca"
-version = "0.0.3"
+version = "0.1.0"
 description = "Package for PCA-based spatial domain identification in single-cell spatial transcriptomics data."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -27,7 +27,6 @@ dependencies = [
   "leidenalg (>=0.10.2,<0.11.0)",
   "numpy (<2.3.6)",  # Constrain to <2.3.6 until numba fully supports higher versions
   "scanpy (>=1.11.4,<2.0.0)",
-  # for debug logging (referenced from the issue template)
   "session-info2",
   "torch (>=2.8,<3.0.0)",
   "torch-geometric (>=2.6.1,<3.0.0)",
