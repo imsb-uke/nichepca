@@ -1,12 +1,12 @@
 {
   "template": "https://github.com/scverse/cookiecutter-scverse",
-  "commit": "d383d94fadff9e4e6fdb59d77c68cb900d7cedec",
-  "checkout": "v0.6.0",
+  "commit": "6ff5b92b5d44ea6d8a88e47538475718d467db95",
+  "checkout": "v0.7.0",
   "context": {
     "cookiecutter": {
       "project_name": "nichepca",
       "package_name": "nichepca",
-      "project_description": "Package for PCA-based spatial domain identification in single-cell spatial transcriptomics data",
+      "project_description": "Package for PCA-based spatial domain identification in single-cell spatial transcriptomics data.",
       "author_full_name": "Darius P. Schaub",
       "author_email": "schaub.darius@gmail.com",
       "github_user": "imsb-uke",
@@ -36,7 +36,7 @@
         "trim_blocks": true
       },
       "_template": "https://github.com/scverse/cookiecutter-scverse",
-      "_commit": "d383d94fadff9e4e6fdb59d77c68cb900d7cedec"
+      "_commit": "6ff5b92b5d44ea6d8a88e47538475718d467db95"
     }
   },
   "directory": null
