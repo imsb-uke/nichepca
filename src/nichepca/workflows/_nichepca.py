@@ -176,9 +176,11 @@ def nichepca(
             sc.tl.pca(ad_tmp, n_comps=n_comps)
             # run harmony if sample_key is provided and obs key is None
             if sample_key is not None and obs_key is None and allow_harmony:
-                sc.external.pp.harmony_integrate(
-                    ad_tmp, key=sample_key, max_iter_harmony=max_iter_harmony
-                )
+                harmony_kw = {"max_iter_harmony": max_iter_harmony}
+                # scanpy>=1.13 defaults to non-deterministic harmony2 unless seeded
+                if hasattr(sc.pp, "harmony_integrate"):
+                    harmony_kw["rng"] = 0
+                sc.external.pp.harmony_integrate(ad_tmp, key=sample_key, **harmony_kw)
         else:
             raise ValueError(f"Unknown step in the pipeline: {fn}")
 
