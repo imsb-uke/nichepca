@@ -12,7 +12,7 @@
 [badge-tests]: https://img.shields.io/github/actions/workflow/status/imsb-uke/nichepca/test.yaml?branch=main
 [badge-docs]: https://img.shields.io/readthedocs/nichepca
 
-NichePCA is a package for PCA-based spatial domain identification in single-cell spatial transcriptomics data. The corresponding manuscript was published in [Bioinformatics](https://academic.oup.com/bioinformatics/article/41/1/btaf005/7945104?).
+NichePCA is a [scverse](https://scverse.org/packages/) ecosystem package for PCA-based spatial domain identification in single-cell spatial transcriptomics data. The corresponding manuscript was published in [Bioinformatics](https://academic.oup.com/bioinformatics/article/41/1/btaf005/7945104?).
 
 ## Installation
 
