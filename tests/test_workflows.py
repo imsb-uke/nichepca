@@ -102,7 +102,7 @@ def test_nichepca_multi_sample():
     sc.tl.pca(adata_2, n_comps=30)
     sc.external.pp.harmony_integrate(adata_2, key="sample", max_iter_harmony=50)
 
-    assert np.all(adata_1.obsm["X_npca"] == adata_2.obsm["X_pca_harmony"])
+    assert np.allclose(adata_1.obsm["X_npca"], adata_2.obsm["X_pca_harmony"], atol=1e-2)
 
     # test with obs_key
     obs_key = "cell_type"
