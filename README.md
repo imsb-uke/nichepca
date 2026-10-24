@@ -89,7 +89,7 @@ If you want to contribute you can follow this [guide](https://scanpy.readthedocs
 ```bash
 git clone https://github.com/{your-username}/nichepca.git
 cd nichepca
-uv sync --all-extras
+uv sync --all-groups
 ```
 And then make your changes, run the tests and submit a pull request.
 
