@@ -106,7 +106,7 @@ only because an outdated sphinx plugin pins an older version.
 To initalize a virtual environment in the `.venv` directory of your project, simply run
 
 ```bash
-uv sync --all-extras
+uv sync --all-groups
 ```
 
 The `.venv` directory is typically automatically discovered by IDEs such as VS Code.
@@ -122,7 +122,7 @@ we describe how you can manage environments manually using `pip`:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e ".[dev,test,doc]"
+pip install -e . --group dev --group test --group doc
 ```
 
 The `.venv` directory is typically automatically discovered by IDEs such as VS Code.
@@ -135,20 +135,21 @@ The `.venv` directory is typically automatically discovered by IDEs such as VS C
 
 ## Code-style
 
-This package uses [pre-commit][] to enforce consistent code-styles.
-On every commit, pre-commit checks will either automatically fix issues with the code, or raise an error message.
+This package uses [pre-commit][]-style hooks to enforce consistent code-styles.
+We recommend running them with [prek][], a fast, drop-in replacement for `pre-commit` that reads the same `.pre-commit-config.yaml`.
+On every commit, the checks will either automatically fix issues with the code, or raise an error message.
 
-To enable pre-commit locally, simply run
+To enable the checks locally, install [prek][] (e.g. with `uv tool install prek`) and run
 
 ```bash
-pre-commit install
+prek install
 ```
 
 in the root of the repository.
-Pre-commit will automatically download all dependencies when it is run for the first time.
+prek will automatically download all dependencies when it is run for the first time.
 
 Alternatively, you can rely on the [pre-commit.ci][] service enabled on GitHub.
-If you didn’t run `pre-commit` before pushing changes to GitHub it will automatically commit fixes to your pull request, or show an error message.
+If you didn’t run the checks before pushing changes to GitHub it will automatically commit fixes to your pull request, or show an error message.
 
 If pre-commit.ci added a commit on a branch you still have been working on locally, simply use
 
@@ -157,12 +158,13 @@ git pull --rebase
 ```
 
 to integrate the changes into yours.
-While the [pre-commit.ci][] is useful, we strongly encourage installing and running pre-commit locally first to understand its usage.
+While the [pre-commit.ci][] is useful, we strongly encourage installing and running the checks locally first to understand their usage.
 
 Finally, most editors have an _autoformat on save_ feature.
 Consider enabling this option for [ruff][ruff-editors] and [biome][biome-editors].
 
 [pre-commit]: https://pre-commit.com/
+[prek]: https://prek.j178.dev/
 [pre-commit.ci]: https://pre-commit.ci/
 [ruff-editors]: https://docs.astral.sh/ruff/integrations/
 [biome-editors]: https://biomejs.dev/guides/integrate-in-editor/
