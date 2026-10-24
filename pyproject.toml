@@ -14,18 +14,19 @@ maintainers = [
 authors = [
   { name = "Darius P. Schaub" },
 ]
-requires-python = ">=3.11,<3.14"
+requires-python = ">=3.11"
 classifiers = [
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
   "harmonypy (>=0.0.10,<0.0.11)",
   "leidenalg (>=0.10.2,<0.11.0)",
-  "numpy (<2.3.6)",  # Constrain to <2.3.6 until numba fully supports higher versions
+  "numpy",
   "scanpy (>=1.11.4,<2.0.0)",
   "session-info2",
   "torch (>=2.8,<3.0.0)",
@@ -83,12 +84,12 @@ clean = "git clean -fdX -- {args:docs}"
 # Test the lowest and highest supported Python versions with normal deps
 [[tool.hatch.envs.hatch-test.matrix]]
 deps = [ "stable" ]
-python = [ "3.11", "3.13" ]
+python = [ "3.11", "3.14" ]
 
 # Test the newest supported Python version also with pre-release deps
 [[tool.hatch.envs.hatch-test.matrix]]
 deps = [ "pre" ]
-python = [ "3.13" ]
+python = [ "3.14" ]
 
 [tool.hatch.envs.hatch-test]
 features = [ "dev", "test" ]
